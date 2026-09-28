@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="../../releases/latest"><strong>⬇️ Baixar o app para Android (APK)</strong></a>
+  <a href="https://github.com/diego1570565/kanto-mare-luar/releases/latest"><strong>⬇️ Baixar o app para Android (APK)</strong></a>
 </p>
 
 ---
@@ -35,7 +35,7 @@ Tudo fica guardado **somente no próprio aparelho** (IndexedDB), sem servidor e 
 
 ## Instalar no celular
 
-1. Baixe o arquivo `.apk` na página de [versões](../../releases/latest).
+1. Baixe o arquivo `.apk` na página de [versões](https://github.com/diego1570565/kanto-mare-luar/releases/latest).
 2. Toque no arquivo baixado. Se o Android pedir, permita "instalar apps de fontes desconhecidas".
 3. Abra o app **Kanto Maré & Luar** e toque em **Entrar**.
 
