@@ -1,0 +1,112 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">Voltar</ion-button>
+    </ion-buttons>
+    <ion-title>{{ ehGasto ? 'Gasto' : 'Entrada de dinheiro' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [strong]="true" (click)="salvar()">Salvar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-segment class="tipo-segment" [(ngModel)]="modelo.tipo" (ionChange)="onTipoAlterado()" [class.receita]="!ehGasto">
+    <ion-segment-button value="despesa">
+      <ion-label>Gasto (saiu dinheiro)</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="receita">
+      <ion-label>Entrada (entrou dinheiro)</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  @if (!ehGasto) {
+    <p class="app-texto-ajuda">Pagamentos de hospedagem já entram sozinhos pelas reservas. Use aqui só para outras entradas (passeio, frigobar...).</p>
+  }
+
+  <ion-list class="app-modal-form" lines="inset">
+    <ion-item>
+      <ion-input label="Valor (R$)" labelPlacement="stacked" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00" [(ngModel)]="modelo.valor" name="valor"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        [label]="ehGasto ? 'Com o que gastou' : 'De onde veio'"
+        labelPlacement="stacked"
+        [placeholder]="ehGasto ? 'Ex: conta de luz' : 'Ex: passeio de barco'"
+        [(ngModel)]="modelo.descricao"
+        name="descricao"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select label="Tipo" labelPlacement="stacked" interface="action-sheet" cancelText="Voltar" placeholder="Toque para escolher" [(ngModel)]="modelo.categoria" name="categoria">
+        @for (c of categorias; track c) {
+          <ion-select-option [value]="c">{{ c }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-toggle [(ngModel)]="pago" name="pago" justify="space-between">
+        @if (ehGasto) {
+          {{ pago ? 'Já paguei' : 'Ainda vou pagar (conta a vencer)' }}
+        } @else {
+          {{ pago ? 'Já recebi' : 'Ainda vou receber' }}
+        }
+      </ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-input [label]="pago ? 'Data do pagamento' : 'Data de vencimento'" labelPlacement="stacked" type="date" [(ngModel)]="modelo.data" name="data"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select label="Como pagou (se quiser)" labelPlacement="stacked" interface="action-sheet" cancelText="Voltar" placeholder="Toque para escolher" [(ngModel)]="modelo.formaPagamento" name="forma">
+        @for (f of formasPagamento; track f) {
+          <ion-select-option [value]="f">{{ f }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    @if (!edicao) {
+      <ion-item>
+        <ion-select label="Repete todo mês?" labelPlacement="stacked" interface="action-sheet" cancelText="Voltar" [(ngModel)]="repetirMeses" name="repetir">
+          @for (n of opcoesRepeticao; track n) {
+            <ion-select-option [value]="n">{{ n === 1 ? 'Não, só esta vez' : 'Sim, pelos próximos ' + n + ' meses' }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+    }
+
+    <ion-item lines="none">
+      <ion-textarea label="Anotações (se quiser)" labelPlacement="stacked" autoGrow="true" [(ngModel)]="modelo.observacoes" name="observacoes"></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  @if (!edicao && repetirMeses > 1) {
+    <p class="app-texto-ajuda">Vou anotar esta conta e mais {{ repetirMeses - 1 }} {{ repetirMeses - 1 === 1 ? 'igual' : 'iguais' }} nos meses seguintes, como "ainda vou pagar". Bom para luz, água, internet e salário.</p>
+  }
+
+  @if (tentouSalvar && problemas.length > 0) {
+    <div class="app-aviso-erro">
+      <strong>Para salvar, falta:</strong>
+      <ul>
+        @for (p of problemas; track p) {
+          <li>{{ p }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <div class="app-acoes-rodape">
+    <ion-button expand="block" [color]="ehGasto ? 'danger' : 'success'" (click)="salvar()">
+      {{ ehGasto ? 'Salvar gasto' : 'Salvar entrada' }}
+    </ion-button>
+    @if (edicao) {
+      <ion-button expand="block" fill="outline" color="medium" (click)="apagar()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Apagar
+      </ion-button>
+    }
+  </div>
+</ion-content>

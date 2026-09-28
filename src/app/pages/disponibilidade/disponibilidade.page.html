@@ -1,0 +1,96 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Consultar vagas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <h2 class="app-section-title">Tem suíte livre?</h2>
+  <div class="app-card">
+    <ion-list lines="inset" class="app-modal-form">
+      <ion-item>
+        <ion-input label="Dia da chegada" labelPlacement="stacked" type="date" [(ngModel)]="dataInicio" name="dataInicio" (ionChange)="verificarDisponibilidade()"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Dia da saída" labelPlacement="stacked" type="date" [(ngModel)]="dataFim" name="dataFim" (ionChange)="verificarDisponibilidade()"></ion-input>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-select label="Qual suíte" labelPlacement="stacked" [(ngModel)]="suiteIdSelecionada" name="suiteId" interface="action-sheet" cancelText="Voltar" (ionChange)="verificarDisponibilidade()">
+          <ion-select-option value="todas">Todas as suítes</ion-select-option>
+          @for (s of suites; track s.id) {
+            <ion-select-option [value]="s.id">{{ s.nome }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="block" class="botao-consultar" (click)="verificarDisponibilidade()">
+      <ion-icon slot="start" name="search-outline"></ion-icon>
+      Consultar
+    </ion-button>
+  </div>
+
+  @if (buscaRealizada) {
+    @if (erroDatas) {
+      <div class="app-aviso-erro">{{ erroDatas }}</div>
+    } @else if (suites.length === 0) {
+      <div class="app-empty-state">
+        <p>Nenhuma suíte cadastrada. Cadastre as suítes no menu "Suítes".</p>
+      </div>
+    } @else {
+      <p class="resumo-busca">
+        De {{ formatarData(dataInicio) }} até {{ formatarData(dataFim) }} ({{ diarias }} {{ diarias === 1 ? 'diária' : 'diárias' }}):
+        <strong>{{ totalLivres === 0 ? 'nenhuma suíte livre' : totalLivres === 1 ? '1 suíte livre' : totalLivres + ' suítes livres' }}</strong>
+      </p>
+      @for (r of resultados; track r.suite.id) {
+        <div class="cartao-suite" [class.livre]="r.livre" [class.ocupada]="!r.livre">
+          <div class="cartao-topo">
+            <ion-icon [name]="r.livre ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+            <div>
+              <strong>{{ r.suite.nome }}</strong>
+              <span>{{ r.livre ? 'Livre' : 'Ocupada' }} · {{ formatarMoeda(r.suite.valorDiaria) }} a diária</span>
+            </div>
+          </div>
+          @if (r.livre) {
+            <ion-button expand="block" color="success" (click)="reservar(r.suite)">
+              <ion-icon slot="start" name="calendar-outline"></ion-icon>
+              Reservar esta suíte
+            </ion-button>
+          } @else {
+            @for (o of r.ocupacoes; track o.reserva.id) {
+              <button type="button" class="ocupacao" (click)="abrirReserva(o.reserva)">
+                {{ o.hospedeNome }} · {{ o.periodo }} <span>ver reserva ›</span>
+              </button>
+            }
+          }
+        </div>
+      }
+    }
+  }
+
+  <h2 class="app-section-title">Procurar um hóspede</h2>
+  <ion-searchbar [(ngModel)]="termoHospede" placeholder="Digite o nome" [debounce]="150" (ionInput)="buscarHospede()" class="busca"></ion-searchbar>
+
+  @if (termoHospede.trim().length > 0) {
+    @if (historicoHospede.length === 0) {
+      <div class="app-empty-state">
+        <ion-icon name="person-outline"></ion-icon>
+        <p>Nenhuma reserva com esse nome.</p>
+      </div>
+    } @else {
+      <ion-list class="app-list">
+        @for (h of historicoHospede; track h.reserva.id) {
+          <ion-item button detail="true" (click)="abrirReserva(h.reserva)">
+            <ion-label class="ion-text-wrap">
+              <h2>{{ h.hospedeNome }}</h2>
+              <p>{{ h.suiteNome }} · {{ h.periodo }}</p>
+              <p>{{ statusLabel[h.reserva.status] }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    }
+  }
+</ion-content>

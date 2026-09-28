@@ -1,0 +1,122 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Início</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="app-hero">
+    <h1>{{ saudacao }}</h1>
+    <p>{{ nomePousada }} · {{ dataHojeExtenso }}</p>
+  </div>
+
+  @if (lembreteBackup) {
+    <a class="lembrete" routerLink="/configuracoes">
+      <ion-icon name="cloud-download-outline"></ion-icon>
+      <span>{{ lembreteBackup }}</span>
+    </a>
+  }
+
+  <div class="atalhos">
+    <button type="button" class="atalho principal" (click)="novaReserva()">
+      <ion-icon name="add-circle-outline"></ion-icon>
+      Fazer reserva
+    </button>
+    <a class="atalho" routerLink="/disponibilidade">
+      <ion-icon name="search-outline"></ion-icon>
+      Consultar vagas
+    </a>
+    <button type="button" class="atalho" (click)="anotarGasto()">
+      <ion-icon name="remove-circle-outline"></ion-icon>
+      Anotar gasto
+    </button>
+    <a class="atalho" routerLink="/hospedes">
+      <ion-icon name="people-outline"></ion-icon>
+      Hóspedes
+    </a>
+  </div>
+
+  <h2 class="app-section-title">Hoje</h2>
+  <div class="numeros">
+    <div class="numero">
+      <ion-icon name="bed-outline"></ion-icon>
+      <strong>{{ suitesOcupadas }} de {{ totalSuites }}</strong>
+      <span>suítes ocupadas</span>
+    </div>
+    <a class="numero" routerLink="/financeiro">
+      <ion-icon name="cash-outline"></ion-icon>
+      <strong>{{ formatarMoeda(totalAReceber) }}</strong>
+      <span>hóspedes ainda devem</span>
+    </a>
+  </div>
+
+  <h2 class="app-section-title">
+    <ion-icon name="log-in-outline"></ion-icon>
+    Chegam hoje
+  </h2>
+  @if (chegamHoje.length === 0) {
+    <p class="vazio">Ninguém chega hoje.</p>
+  } @else {
+    <ion-list class="app-list" lines="none">
+      @for (item of chegamHoje; track item.reserva.id) {
+        <ion-item button detail="true" (click)="abrirReserva(item)">
+          <ion-label class="ion-text-wrap">
+            <h2>{{ item.hospedeNome }}</h2>
+            <p>{{ item.suiteNome }} · até {{ formatarData(item.reserva.checkOut) }}</p>
+            @if (item.faltaPagar > 0) {
+              <p><ion-badge color="warning">Falta pagar {{ formatarMoeda(item.faltaPagar) }}</ion-badge></p>
+            }
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <h2 class="app-section-title">
+    <ion-icon name="log-out-outline"></ion-icon>
+    Saem hoje
+  </h2>
+  @if (saemHoje.length === 0) {
+    <p class="vazio">Ninguém sai hoje.</p>
+  } @else {
+    <ion-list class="app-list" lines="none">
+      @for (item of saemHoje; track item.reserva.id) {
+        <ion-item button detail="true" (click)="abrirReserva(item)">
+          <ion-label class="ion-text-wrap">
+            <h2>{{ item.hospedeNome }}</h2>
+            <p>{{ item.suiteNome }}</p>
+            <p>
+              @if (item.faltaPagar > 0) {
+                <ion-badge color="danger">Antes de sair, falta pagar {{ formatarMoeda(item.faltaPagar) }}</ion-badge>
+              } @else {
+                <ion-badge color="success">Tudo pago</ion-badge>
+              }
+            </p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <h2 class="app-section-title">Próximas chegadas</h2>
+  @if (proximas.length === 0) {
+    <div class="app-empty-state">
+      <ion-icon name="calendar-clear-outline"></ion-icon>
+      <p>Nenhuma reserva marcada para os próximos dias.</p>
+    </div>
+  } @else {
+    <ion-list class="app-list" lines="none">
+      @for (item of proximas; track item.reserva.id) {
+        <ion-item button detail="true" (click)="abrirReserva(item)">
+          <ion-label class="ion-text-wrap">
+            <h2>{{ item.hospedeNome }}</h2>
+            <p>{{ item.suiteNome }} · {{ item.periodo }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>

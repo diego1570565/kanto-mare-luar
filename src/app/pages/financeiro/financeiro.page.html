@@ -1,0 +1,270 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Caixa</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="exportarCsv()">
+        <ion-icon slot="start" name="download-outline"></ion-icon>
+        Planilha
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="barra-mes">
+    <ion-buttons slot="start">
+      <ion-button (click)="mudarMes(-1)" aria-label="Mês anterior">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <div class="mes-atual">
+      <strong>{{ rotuloMes }}</strong>
+      @if (!ehMesAtual) {
+        <button type="button" class="link-hoje" (click)="irParaMesAtual()">voltar para este mês</button>
+      }
+    </div>
+    <ion-buttons slot="end">
+      <ion-button (click)="mudarMes(1)" aria-label="Próximo mês">
+        <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="aba">
+      <ion-segment-button value="resumo"><ion-label>Resumo</ion-label></ion-segment-button>
+      <ion-segment-button value="lancamentos"><ion-label>Anotações</ion-label></ion-segment-button>
+      <ion-segment-button value="pendencias"><ion-label>Em aberto</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="botoes-anotar">
+    <ion-button expand="block" color="success" (click)="novoLancamento('receita')">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Anotar entrada
+    </ion-button>
+    <ion-button expand="block" color="danger" (click)="novoLancamento('despesa')">
+      <ion-icon slot="start" name="remove-circle-outline"></ion-icon>
+      Anotar gasto
+    </ion-button>
+  </div>
+
+  @if (vencidos.length > 0 && aba !== 'pendencias') {
+    <button type="button" class="alerta-vencidos" (click)="aba = 'pendencias'">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <span>
+        <strong>{{ vencidos.length }} {{ vencidos.length === 1 ? 'conta atrasada' : 'contas atrasadas' }}</strong>
+        ({{ formatarMoeda(totalVencidos) }}). Toque para ver.
+      </span>
+    </button>
+  }
+
+  @switch (aba) {
+    @case ('resumo') {
+      <section class="saldo-card">
+        <span class="saldo-rotulo">Quanto sobrou no mês</span>
+        <strong class="saldo-valor" [class.negativo]="resumo.saldo < 0">{{ formatarMoeda(resumo.saldo) }}</strong>
+        @if (resumo.saldo < 0) {
+          <span class="saldo-rotulo">Gastou mais do que entrou.</span>
+        }
+        <div class="saldo-detalhe">
+          <div>
+            <ion-icon name="trending-up-outline"></ion-icon>
+            <span>Entrou</span>
+            <strong>{{ formatarMoeda(resumo.receitas) }}</strong>
+          </div>
+          <div>
+            <ion-icon name="trending-down-outline"></ion-icon>
+            <span>Saiu</span>
+            <strong>{{ formatarMoeda(resumo.despesas) }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <div class="cards-previsao">
+        <div class="app-card previsao">
+          <span>Ainda vai entrar</span>
+          <strong class="texto-receita">{{ formatarMoeda(resumo.aReceber) }}</strong>
+        </div>
+        <div class="app-card previsao">
+          <span>Ainda vai sair</span>
+          <strong class="texto-despesa">{{ formatarMoeda(resumo.aPagar) }}</strong>
+        </div>
+      </div>
+
+      <h2 class="app-section-title">Últimos 6 meses</h2>
+      <div class="app-card grafico-card">
+        <div class="legenda">
+          <span><i class="amostra receita"></i>Entrou</span>
+          <span><i class="amostra despesa"></i>Saiu</span>
+        </div>
+        @let destaque = mesEmDestaque ?? serie[serie.length - 1];
+        @if (destaque) {
+          <p class="leitura" aria-live="polite">
+            <strong>{{ destaque.rotulo }}:</strong>
+            entrou {{ formatarMoeda(destaque.receitas) }}, saiu {{ formatarMoeda(destaque.despesas) }}
+          </p>
+        }
+        @if (maiorValorSerie === 0) {
+          <p class="grafico-vazio">Ainda não tem nada pago ou recebido nesses meses.</p>
+        } @else {
+          <div class="grafico" role="list">
+            @for (s of serie; track s.mes) {
+              <button
+                type="button"
+                role="listitem"
+                class="grupo-mes"
+                [class.ativo]="s.mes === mes"
+                [attr.aria-label]="s.rotulo + ': entrou ' + formatarMoeda(s.receitas) + ', saiu ' + formatarMoeda(s.despesas)"
+                (mouseenter)="mesEmDestaque = s"
+                (mouseleave)="mesEmDestaque = null"
+                (focus)="mesEmDestaque = s"
+                (click)="selecionarMes(s)"
+              >
+                <span class="barras">
+                  <span class="barra receita" [style.height.%]="alturaBarra(s.receitas)"></span>
+                  <span class="barra despesa" [style.height.%]="alturaBarra(s.despesas)"></span>
+                </span>
+                <span class="rotulo-mes">{{ s.rotulo }}</span>
+              </button>
+            }
+          </div>
+          <p class="dica-grafico">Toque num mês para ver os números dele.</p>
+        }
+      </div>
+
+      <h2 class="app-section-title">Com o que gastou</h2>
+      <div class="app-card">
+        @if (despesasPorCategoria.length === 0) {
+          <p class="sem-dados">Nenhum gasto pago em {{ rotuloMes }}.</p>
+        } @else {
+          @for (c of despesasPorCategoria; track c.categoria) {
+            <div class="linha-categoria">
+              <div class="linha-topo">
+                <span>{{ c.categoria }}</span>
+                <strong>{{ formatarMoeda(c.valor) }} <small>{{ c.percentual.toFixed(0) }}%</small></strong>
+              </div>
+              <div class="trilho"><div class="preenchimento despesa" [style.width.%]="c.percentual"></div></div>
+            </div>
+          }
+        }
+      </div>
+
+      <h2 class="app-section-title">De onde entrou</h2>
+      <div class="app-card">
+        @if (receitasPorCategoria.length === 0) {
+          <p class="sem-dados">Nada recebido em {{ rotuloMes }}.</p>
+        } @else {
+          @for (c of receitasPorCategoria; track c.categoria) {
+            <div class="linha-categoria">
+              <div class="linha-topo">
+                <span>{{ c.categoria }}</span>
+                <strong>{{ formatarMoeda(c.valor) }} <small>{{ c.percentual.toFixed(0) }}%</small></strong>
+              </div>
+              <div class="trilho"><div class="preenchimento receita" [style.width.%]="c.percentual"></div></div>
+            </div>
+          }
+        }
+      </div>
+    }
+
+    @case ('lancamentos') {
+      <div class="filtros">
+        <ion-chip [outline]="filtro !== 'todos'" [color]="filtro === 'todos' ? 'primary' : 'medium'" (click)="filtro = 'todos'">Tudo</ion-chip>
+        <ion-chip [outline]="filtro !== 'receita'" [color]="filtro === 'receita' ? 'primary' : 'medium'" (click)="filtro = 'receita'">Entradas</ion-chip>
+        <ion-chip [outline]="filtro !== 'despesa'" [color]="filtro === 'despesa' ? 'primary' : 'medium'" (click)="filtro = 'despesa'">Gastos</ion-chip>
+        <ion-chip [outline]="filtro !== 'pendente'" [color]="filtro === 'pendente' ? 'primary' : 'medium'" (click)="filtro = 'pendente'">Não pagos</ion-chip>
+      </div>
+
+      @if (movimentosFiltrados.length === 0) {
+        <div class="app-empty-state">
+          <ion-icon name="wallet-outline"></ion-icon>
+          <p>Nada anotado em {{ rotuloMes }}.</p>
+        </div>
+      } @else {
+        <ion-list class="app-list">
+          @for (m of movimentosFiltrados; track m.id) {
+            <ion-item button detail="false" (click)="abrirMovimento(m)">
+              <div slot="start" class="icone-mov" [class.receita]="m.tipo === 'receita'" [class.despesa]="m.tipo === 'despesa'">
+                <ion-icon [name]="m.origem === 'reserva' ? 'bed-outline' : m.tipo === 'receita' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+              </div>
+              <ion-label class="ion-text-wrap">
+                <h2>{{ m.descricao }}</h2>
+                <p>{{ m.categoria }} · {{ formatarData(m.data) }}{{ m.formaPagamento ? ' · ' + m.formaPagamento : '' }}</p>
+                <p class="valor-linha">
+                  <span [class.texto-receita]="m.tipo === 'receita'" [class.texto-despesa]="m.tipo === 'despesa'">
+                    {{ m.tipo === 'receita' ? '+' : '−' }} {{ formatarMoeda(m.valor) }}
+                  </span>
+                  @if (m.status === 'pendente') {
+                    @if (estaVencido(m)) {
+                      <ion-badge color="danger">Atrasado</ion-badge>
+                    } @else {
+                      <ion-badge color="warning">{{ m.tipo === 'receita' ? 'Ainda vai receber' : 'Ainda vai pagar' }}</ion-badge>
+                    }
+                  }
+                </p>
+                @if (m.status === 'pendente') {
+                  <ion-button size="small" color="success" class="botao-pago" (click)="$event.stopPropagation(); marcarComoPago(m)">
+                    <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+                    {{ m.tipo === 'receita' ? 'Já recebi' : 'Já paguei' }}
+                  </ion-button>
+                }
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+        <p class="dica">Toque em uma anotação para mudar ou apagar. Pagamentos de hospedagem abrem a reserva.</p>
+      }
+    }
+
+    @case ('pendencias') {
+      <h2 class="app-section-title">Hóspedes que ainda devem</h2>
+      @if (recebiveis.length === 0) {
+        <div class="app-card sem-dados">Ninguém está devendo. 🎉</div>
+      } @else {
+        <div class="app-card total-pendencia">
+          <span>Total que falta receber</span>
+          <strong class="texto-receita">{{ formatarMoeda(totalRecebiveis) }}</strong>
+        </div>
+        <ion-list class="app-list">
+          @for (r of recebiveis; track r.reserva.id) {
+            <ion-item button detail="true" (click)="abrirReserva(r.reserva)">
+              <ion-label class="ion-text-wrap">
+                <h2>{{ r.hospedeNome }}</h2>
+                <p>{{ r.suiteNome }} · {{ r.periodo }}</p>
+                <p>Deve <strong class="texto-despesa">{{ formatarMoeda(r.saldo) }}</strong> de {{ formatarMoeda(r.reserva.valorTotal) }}</p>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      }
+
+      <h2 class="app-section-title">Contas para pagar</h2>
+      @if (contasAPagar.length === 0) {
+        <div class="app-card sem-dados">Nenhuma conta para pagar.</div>
+      } @else {
+        <ion-list class="app-list">
+          @for (m of contasAPagar; track m.id) {
+            <ion-item button detail="false" (click)="abrirMovimento(m)">
+              <ion-label class="ion-text-wrap">
+                <h2>{{ m.descricao }}</h2>
+                <p>{{ m.categoria }} · vence {{ formatarData(m.data) }}</p>
+                <p class="valor-linha">
+                  <span class="texto-despesa">{{ formatarMoeda(m.valor) }}</span>
+                  @if (estaVencido(m)) {
+                    <ion-badge color="danger">Atrasada</ion-badge>
+                  }
+                </p>
+                <ion-button size="small" color="success" class="botao-pago" (click)="$event.stopPropagation(); marcarComoPago(m)">
+                  <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+                  Já paguei
+                </ion-button>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      }
+    }
+  }
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "kanto-mare-luar",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

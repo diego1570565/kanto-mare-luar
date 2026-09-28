@@ -1,0 +1,32 @@
+<ion-content [fullscreen]="true" class="fundo-entrar">
+  <div class="ceu">
+    <span class="estrela e1"></span>
+    <span class="estrela e2"></span>
+    <span class="estrela e3"></span>
+    <span class="sol"></span>
+  </div>
+
+  <main class="centro">
+    <img src="assets/icon/logo.jpg" alt="Logo {{ nomePousada }}" class="logo" />
+    <p class="saudacao">{{ saudacao }}</p>
+    <h1>{{ nomePousada }}</h1>
+    <p class="subtitulo">Seu cantinho perto do mar</p>
+
+    <ion-button class="botao-entrar" size="large" (click)="entrar()">
+      Entrar
+      <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+    </ion-button>
+  </main>
+
+  <div class="ondas" aria-hidden="true">
+    <svg class="onda onda-1" viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60 L1440,120 L0,120 Z"></path>
+    </svg>
+    <svg class="onda onda-2" viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path d="M0,70 C180,20 420,110 720,60 C1020,10 1260,100 1440,50 L1440,120 L0,120 Z"></path>
+    </svg>
+    <svg class="onda onda-3" viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path d="M0,80 C300,40 540,110 820,70 C1100,30 1280,90 1440,70 L1440,120 L0,120 Z"></path>
+    </svg>
+  </div>
+</ion-content>

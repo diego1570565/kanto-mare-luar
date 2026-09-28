@@ -1,0 +1,187 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">Voltar</ion-button>
+    </ion-buttons>
+    <ion-title>{{ edicao ? 'Reserva' : 'Nova reserva' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [strong]="true" (click)="salvar()">Salvar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2 class="app-section-title">1. Quem e onde</h2>
+  <ion-list class="app-modal-form" lines="inset">
+    <ion-item>
+      <ion-select
+        label="Quem vai se hospedar"
+        labelPlacement="stacked"
+        placeholder="Toque para escolher"
+        [(ngModel)]="modelo.hospedeId"
+        name="hospedeId"
+        interface="action-sheet"
+        cancelText="Voltar"
+      >
+        @for (h of hospedes; track h.id) {
+          <ion-select-option [value]="h.id">{{ h.nome }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  <ion-button class="botao-secundario" fill="outline" size="default" (click)="cadastrarHospedeNovo()">
+    <ion-icon slot="start" name="person-add-outline"></ion-icon>
+    Hóspede novo? Cadastrar aqui
+  </ion-button>
+
+  <ion-list class="app-modal-form" lines="inset">
+    <ion-item>
+      <ion-select
+        label="Suíte"
+        labelPlacement="stacked"
+        placeholder="Toque para escolher"
+        [(ngModel)]="modelo.suiteId"
+        name="suiteId"
+        interface="action-sheet"
+        cancelText="Voltar"
+        (ionChange)="onSuiteAlterada()"
+      >
+        @for (s of suites; track s.id) {
+          <ion-select-option [value]="s.id">{{ s.nome }} — {{ formatarMoeda(s.valorDiaria) }} a diária</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  @if (suites.length === 0) {
+    <p class="app-texto-ajuda">Nenhuma suíte cadastrada. Cadastre as suítes primeiro, no menu "Suítes".</p>
+  }
+
+  <h2 class="app-section-title">2. Datas</h2>
+  <ion-list class="app-modal-form" lines="inset">
+    <ion-item>
+      <ion-input label="Dia da chegada" labelPlacement="stacked" type="date" [(ngModel)]="modelo.checkIn" name="checkIn" (ionChange)="onPeriodoAlterado()"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input label="Dia da saída" labelPlacement="stacked" type="date" [(ngModel)]="modelo.checkOut" name="checkOut" (ionChange)="onPeriodoAlterado()"></ion-input>
+    </ion-item>
+  </ion-list>
+  @if (numeroDiarias > 0) {
+    <p class="app-texto-ajuda">{{ numeroDiarias }} {{ numeroDiarias === 1 ? 'diária' : 'diárias' }}.</p>
+  }
+
+  @if (conflitos.length > 0) {
+    <div class="app-aviso-erro">
+      <ion-icon name="warning-outline" color="danger"></ion-icon>
+      <strong> Essa suíte já está ocupada nessas datas:</strong>
+      <ul>
+        @for (c of conflitos; track c.id) {
+          <li>{{ nomeHospedeConflito(c) }}, de {{ formatarData(c.checkIn) }} até {{ formatarData(c.checkOut) }}</li>
+        }
+      </ul>
+      Escolha outra suíte ou outras datas.
+    </div>
+  }
+
+  <h2 class="app-section-title">3. Valor</h2>
+  <ion-list class="app-modal-form" lines="inset">
+    <ion-item>
+      <ion-input label="Valor de cada diária (R$)" labelPlacement="stacked" type="number" inputmode="decimal" min="0" step="0.01" [(ngModel)]="modelo.valorDiaria" name="valorDiaria" (ionInput)="recalcularTotal()"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input label="Valor total da hospedagem (R$)" labelPlacement="stacked" type="number" inputmode="decimal" min="0" step="0.01" [(ngModel)]="modelo.valorTotal" name="valorTotal"></ion-input>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-select label="Situação" labelPlacement="stacked" [(ngModel)]="modelo.status" name="status" interface="action-sheet" cancelText="Voltar">
+        @for (opcao of statusOpcoes; track opcao[0]) {
+          <ion-select-option [value]="opcao[0]">{{ opcao[1] }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  <p class="app-texto-ajuda">O total é calculado sozinho (diárias × valor). Se deu desconto, é só mudar o valor total.</p>
+
+  <h2 class="app-section-title">4. Pagamentos</h2>
+  <div class="quadro-pagamento">
+    <div>
+      <span>Já pagou</span>
+      <strong class="pago">{{ formatarMoeda(totalPago) }}</strong>
+    </div>
+    <div>
+      <span>Falta pagar</span>
+      <strong [class.falta]="faltaPagar > 0" [class.pago]="faltaPagar === 0">{{ formatarMoeda(faltaPagar) }}</strong>
+    </div>
+  </div>
+
+  @for (pagamento of pagamentos; track pagamento.id; let i = $index) {
+    <div class="cartao-pagamento">
+      <div class="cartao-topo">
+        <strong>Pagamento {{ i + 1 }}</strong>
+        <ion-button fill="clear" color="danger" size="small" (click)="removerPagamento(pagamento)">
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          Tirar
+        </ion-button>
+      </div>
+      <ion-list lines="inset" class="app-modal-form">
+        <ion-item>
+          <ion-input label="Quanto (R$)" labelPlacement="stacked" type="number" inputmode="decimal" min="0" step="0.01" [(ngModel)]="pagamento.valor" [name]="'valor-' + pagamento.id"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Data" labelPlacement="stacked" type="date" [(ngModel)]="pagamento.data" [name]="'data-' + pagamento.id"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-select label="Como pagou" labelPlacement="stacked" placeholder="Toque para escolher" interface="action-sheet" cancelText="Voltar" [(ngModel)]="pagamento.formaPagamento" [name]="'forma-' + pagamento.id">
+            @for (f of formasPagamento; track f) {
+              <ion-select-option [value]="f">{{ f }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-toggle [ngModel]="pagamentoFoiFeito(pagamento)" (ngModelChange)="marcarPagamento(pagamento, $event)" [name]="'status-' + pagamento.id" justify="space-between">
+            {{ pagamentoFoiFeito(pagamento) ? 'Já recebi esse valor' : 'Ainda vai pagar (combinado)' }}
+          </ion-toggle>
+        </ion-item>
+      </ion-list>
+    </div>
+  }
+
+  <div class="botoes-pagamento">
+    @if (faltaPagar > 0) {
+      <ion-button expand="block" color="success" (click)="receberRestante()">
+        <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+        Recebi tudo o que faltava ({{ formatarMoeda(faltaPagar) }})
+      </ion-button>
+    }
+    <ion-button expand="block" fill="outline" (click)="anotarPagamento()">
+      <ion-icon slot="start" name="cash-outline"></ion-icon>
+      Anotar um pagamento
+    </ion-button>
+  </div>
+
+  <h2 class="app-section-title">5. Anotações</h2>
+  <ion-list class="app-modal-form" lines="inset">
+    <ion-item lines="none">
+      <ion-textarea aria-label="Anotações" placeholder="Ex: vai chegar tarde, quer cama extra..." autoGrow="true" [(ngModel)]="modelo.observacoes" name="observacoes"></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  @if (tentouSalvar && problemas.length > 0) {
+    <div class="app-aviso-erro">
+      <strong>Para salvar, falta:</strong>
+      <ul>
+        @for (p of problemas; track p) {
+          <li>{{ p }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <div class="app-acoes-rodape">
+    <ion-button expand="block" (click)="salvar()">Salvar reserva</ion-button>
+    @if (edicao) {
+      <ion-button expand="block" fill="outline" color="danger" (click)="apagar()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Apagar reserva
+      </ion-button>
+    }
+  </div>
+</ion-content>

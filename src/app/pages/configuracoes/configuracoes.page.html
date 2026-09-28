@@ -1,0 +1,60 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Ajustes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <h2 class="app-section-title">Cópia de segurança</h2>
+  <div class="app-card">
+    <p class="descricao">
+      Os dados ficam guardados <strong>só neste aparelho</strong>. Se o celular quebrar ou for trocado, eles se perdem.
+    </p>
+    <p class="descricao">
+      Uma vez por semana, toque em <strong>"Salvar cópia dos dados"</strong> e mande o arquivo pelo WhatsApp ou e-mail para guardar (pode ser para um familiar).
+    </p>
+    <p class="ultima-copia" [class.nunca]="!ultimoBackup">
+      {{ ultimoBackup ? 'Última cópia salva em ' + ultimoBackup + '.' : 'Nenhuma cópia salva ainda.' }}
+    </p>
+    <ion-button expand="block" class="botao-grande" (click)="exportarBackup()">
+      <ion-icon slot="start" name="download-outline"></ion-icon>
+      Salvar cópia dos dados
+    </ion-button>
+    <ion-button expand="block" fill="outline" class="botao-grande" (click)="abrirSeletorArquivo()">
+      <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+      Recuperar dados de uma cópia
+    </ion-button>
+    <input #inputArquivo type="file" accept="application/json,.json" hidden (change)="onArquivoSelecionado($event)" />
+  </div>
+
+  <h2 class="app-section-title">Dados da pousada</h2>
+  <div class="app-card">
+    <ion-list lines="inset" class="app-modal-form">
+      <ion-item>
+        <ion-input label="Nome da pousada" labelPlacement="stacked" [(ngModel)]="config.nome" name="nome"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Endereço" labelPlacement="stacked" [(ngModel)]="config.endereco" name="endereco"></ion-input>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-input label="Telefone / WhatsApp" labelPlacement="stacked" type="tel" [(ngModel)]="config.telefone" name="telefone"></ion-input>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="block" class="botao-grande" (click)="salvarConfig()">
+      <ion-icon slot="start" name="save-outline"></ion-icon>
+      Salvar dados da pousada
+    </ion-button>
+  </div>
+
+  <h2 class="app-section-title">Cuidado</h2>
+  <div class="app-card">
+    <p class="descricao">Apaga tudo o que foi cadastrado neste aparelho. Não tem como desfazer.</p>
+    <ion-button expand="block" color="danger" fill="outline" class="botao-grande" (click)="limparTudo()">
+      <ion-icon slot="start" name="trash-outline"></ion-icon>
+      Apagar todos os dados
+    </ion-button>
+  </div>
+</ion-content>

@@ -1,0 +1,86 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">Voltar</ion-button>
+    </ion-buttons>
+    <ion-title>{{ edicao ? 'Hóspede' : 'Novo hóspede' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [strong]="true" (click)="salvar()">Salvar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list class="app-modal-form" lines="inset">
+    <ion-item>
+      <ion-input label="Nome" labelPlacement="stacked" placeholder="Ex: Maria Souza" autocapitalize="words" [(ngModel)]="modelo.nome" name="nome"></ion-input>
+    </ion-item>
+    @if (tentouSalvar && !valido) {
+      <p class="app-texto-ajuda erro">Escreva o nome do hóspede.</p>
+    }
+
+    <ion-item>
+      <ion-input label="Telefone / WhatsApp" labelPlacement="stacked" type="tel" inputmode="tel" placeholder="(73) 99999-9999" [(ngModel)]="modelo.telefone" name="telefone"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input label="CPF ou RG (se quiser)" labelPlacement="stacked" [(ngModel)]="modelo.documento" name="documento"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input label="Cidade" labelPlacement="stacked" placeholder="Ex: Teixeira de Freitas/BA" [(ngModel)]="modelo.cidade" name="cidade"></ion-input>
+    </ion-item>
+
+    <ion-item lines="none">
+      <ion-textarea label="Anotações" labelPlacement="stacked" placeholder="Ex: gosta do quarto de frente para o mar" autoGrow="true" [(ngModel)]="modelo.observacoes" name="observacoes"></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  @if (linkWhatsapp) {
+    <ion-button expand="block" color="success" class="botao-largo" (click)="abrirWhatsapp()">
+      <ion-icon slot="start" name="logo-whatsapp"></ion-icon>
+      Chamar no WhatsApp
+    </ion-button>
+  }
+
+  @if (!apenasCadastro) {
+    <ion-button expand="block" fill="outline" class="botao-largo" (click)="novaReserva()">
+      <ion-icon slot="start" name="calendar-outline"></ion-icon>
+      Fazer uma reserva para {{ modelo.nome.trim() || 'este hóspede' }}
+    </ion-button>
+
+    @if (edicao) {
+      <h2 class="app-section-title">Hospedagens</h2>
+      @if (hospedagens.length === 0) {
+        <p class="app-texto-ajuda">Nenhuma reserva ainda.</p>
+      } @else {
+        <ion-list class="app-list">
+          @for (h of hospedagens; track h.reserva.id) {
+            <ion-item button detail="true" (click)="abrirHospedagem(h)">
+              <ion-label class="ion-text-wrap">
+                <h2>{{ h.suiteNome }}</h2>
+                <p>{{ h.periodo }}</p>
+                <p>
+                  <ion-badge [color]="statusCor[h.reserva.status]">{{ statusLabel[h.reserva.status] }}</ion-badge>
+                  @if (h.faltaPagar > 0) {
+                    <ion-badge color="warning">Falta pagar {{ formatarMoeda(h.faltaPagar) }}</ion-badge>
+                  }
+                </p>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      }
+    }
+  }
+
+  <div class="app-acoes-rodape">
+    <ion-button expand="block" (click)="salvar()">Salvar hóspede</ion-button>
+    @if (edicao && !apenasCadastro) {
+      <ion-button expand="block" fill="outline" color="danger" (click)="apagar()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Apagar hóspede
+      </ion-button>
+    }
+  </div>
+</ion-content>

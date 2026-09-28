@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Suítes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-button expand="block" class="app-acao-principal" (click)="abrir()">
+    <ion-icon slot="start" name="add-outline"></ion-icon>
+    Cadastrar suíte nova
+  </ion-button>
+
+  @if (linhas.length === 0) {
+    <div class="app-empty-state">
+      <ion-icon name="bed-outline"></ion-icon>
+      <p>Nenhuma suíte cadastrada ainda. Comece cadastrando as suítes da pousada.</p>
+    </div>
+  } @else {
+    <ion-list class="app-list">
+      @for (linha of linhas; track linha.suite.id) {
+        <ion-item button detail="true" (click)="abrir(linha.suite)" [class.inativa]="!linha.suite.ativo">
+          <ion-label class="ion-text-wrap">
+            <h2>{{ linha.suite.nome }}</h2>
+            <p>{{ linha.suite.tipo }} · cabem {{ linha.suite.capacidade }} · {{ formatarMoeda(linha.suite.valorDiaria) }} a diária</p>
+            <p>
+              @if (!linha.suite.ativo) {
+                <ion-badge color="medium">Desativada</ion-badge>
+              } @else if (linha.ocupadaPor) {
+                <ion-badge color="danger">Ocupada hoje</ion-badge> {{ linha.ocupadaPor }}, sai {{ linha.saidaEm }}
+              } @else {
+                <ion-badge color="success">Livre hoje</ion-badge>
+              }
+            </p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>

@@ -1,0 +1,387 @@
+.barra-mes {
+  --background: var(--ion-card-background);
+
+  .mes-atual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.2;
+
+    strong {
+      font-family: var(--app-font-display);
+      font-size: 17px;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .link-hoje {
+    background: none;
+    border: 0;
+    padding: 2px 0 0;
+    font-size: 14px;
+    color: var(--ion-color-medium-shade);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.alerta-vencidos {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(var(--ion-color-danger-rgb), 0.35);
+  border-radius: var(--app-radius);
+  background: rgba(var(--ion-color-danger-rgb), 0.08);
+  color: var(--ion-text-color);
+  font-size: 16px;
+  cursor: pointer;
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 24px;
+    color: var(--ion-color-danger);
+  }
+}
+
+.saldo-card {
+  background: var(--app-gradient-mar);
+  color: #fff;
+  border-radius: var(--app-radius);
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--app-shadow);
+
+  .saldo-rotulo {
+    display: block;
+    font-size: 16px;
+    opacity: 0.9;
+  }
+
+  .saldo-valor {
+    display: block;
+    font-family: var(--app-font-display);
+    font-size: 32px;
+    margin: 4px 0 14px;
+
+    &.negativo::before {
+      content: '⚠ ';
+      font-size: 22px;
+    }
+  }
+
+  .saldo-detalhe {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    div {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 6px;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    ion-icon {
+      grid-row: span 2;
+      font-size: 22px;
+    }
+
+    span {
+      font-size: 15px;
+      opacity: 0.95;
+    }
+
+    strong {
+      font-size: 17px;
+    }
+  }
+}
+
+.cards-previsao {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  .previsao {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+
+    span {
+      font-size: 15px;
+      color: var(--ion-color-medium-shade);
+    }
+
+    strong {
+      font-size: 19px;
+    }
+  }
+}
+
+.texto-receita {
+  color: var(--ion-color-success);
+}
+
+.texto-despesa {
+  color: var(--ion-color-danger);
+}
+
+/* ---------- Gráfico receitas x despesas ---------- */
+
+.grafico-card {
+  padding-bottom: 10px;
+}
+
+.legenda {
+  display: flex;
+  gap: 16px;
+  font-size: 15px;
+  color: var(--ion-color-step-600, var(--ion-color-medium));
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.amostra {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+
+  &.receita {
+    background: var(--app-chart-receita);
+  }
+
+  &.despesa {
+    background: var(--app-chart-despesa);
+  }
+}
+
+.leitura {
+  margin: 8px 0 4px;
+  font-size: 15px;
+  color: var(--ion-text-color);
+  min-height: 18px;
+}
+
+.grafico-vazio,
+.sem-dados {
+  margin: 8px 0;
+  color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+.grafico {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  height: 170px;
+  margin-top: 8px;
+}
+
+.grupo-mes {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  padding: 4px 0 0;
+  cursor: pointer;
+  color: inherit;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(var(--ion-color-primary-rgb), 0.06);
+    outline: none;
+  }
+
+  .barras {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    border-bottom: 1px solid var(--ion-color-light-shade);
+  }
+
+  .barra {
+    width: min(18px, 32%);
+    border-radius: 4px 4px 0 0;
+    transition: height 0.3s ease;
+
+    &.receita {
+      background: var(--app-chart-receita);
+    }
+
+    &.despesa {
+      background: var(--app-chart-despesa);
+    }
+  }
+
+  .rotulo-mes {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    padding: 6px 0 4px;
+  }
+
+  &.ativo .rotulo-mes {
+    color: var(--ion-color-primary);
+    font-weight: 700;
+  }
+}
+
+/* ---------- Categorias ---------- */
+
+.linha-categoria {
+  padding: 8px 0;
+
+  & + .linha-categoria {
+    border-top: 1px solid var(--ion-color-light-shade);
+  }
+
+  .linha-topo {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 16px;
+    margin-bottom: 6px;
+
+    small {
+      font-weight: 400;
+      color: var(--ion-color-medium);
+      margin-left: 4px;
+    }
+  }
+}
+
+.trilho {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(var(--ion-color-medium-rgb), 0.15);
+  overflow: hidden;
+}
+
+.preenchimento {
+  height: 100%;
+  border-radius: 4px;
+
+  &.receita {
+    background: var(--app-chart-receita);
+  }
+
+  &.despesa {
+    background: var(--app-chart-despesa);
+  }
+}
+
+/* ---------- Lançamentos ---------- */
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.icone-mov {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-inline-end: 12px;
+
+  &.receita {
+    background: rgba(var(--ion-color-success-rgb), 0.14);
+    color: var(--ion-color-success);
+  }
+
+  &.despesa {
+    background: rgba(var(--ion-color-danger-rgb), 0.12);
+    color: var(--ion-color-danger);
+  }
+}
+
+.valor-mov {
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+
+  &.pendente {
+    opacity: 0.7;
+  }
+}
+
+.dica {
+  font-size: 15px;
+  color: var(--ion-color-medium);
+  text-align: center;
+  margin: 12px 0 80px;
+}
+
+.total-pendencia {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  span {
+    color: var(--ion-color-medium);
+    font-size: 14px;
+  }
+
+  strong {
+    font-size: 18px;
+  }
+}
+
+.botoes-anotar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+
+  ion-button {
+    --border-radius: 14px;
+    min-height: 54px;
+    margin: 0;
+  }
+}
+
+.valor-linha {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  span {
+    font-weight: 700;
+    font-size: 17px;
+  }
+}
+
+.botao-pago {
+  --border-radius: 10px;
+  margin: 8px 0 2px;
+}
+
+.dica-grafico {
+  font-size: 14px;
+  color: var(--ion-color-medium-shade);
+  margin: 8px 0 0;
+  text-align: center;
+}

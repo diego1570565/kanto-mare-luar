@@ -1,0 +1,39 @@
+<ion-app>
+  <ion-split-pane contentId="main-content" when="md">
+    <ion-menu contentId="main-content" type="overlay">
+      <ion-header>
+        <ion-toolbar color="primary">
+          <div class="brand">
+            <img src="assets/icon/logo.jpg" alt="Kanto Maré & Luar" class="brand-logo" />
+            <div class="brand-text">
+              <strong>Kanto Maré</strong>
+              <span>&amp; Luar</span>
+            </div>
+          </div>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="menu-conteudo">
+        <ion-list id="menu-list">
+          @for (p of appPages; track p.url) {
+            <ion-menu-toggle auto-hide="false">
+              <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+                <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+                <ion-label>{{ p.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          }
+          <ion-menu-toggle auto-hide="false">
+            <ion-item routerDirection="back" routerLink="/entrar" lines="none" detail="false" class="item-sair">
+              <ion-icon aria-hidden="true" slot="start" name="log-out-outline"></ion-icon>
+              <ion-label>Sair</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+        <div class="menu-footer">
+          <span>Seu cantinho perto do mar 🌊</span>
+        </div>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

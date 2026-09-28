@@ -1,0 +1,367 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* Tema sempre claro: mais legível para quem vai usar e combina com as cores da pousada. */
+
+/*
+ * Estilos globais do app "Kanto Maré & Luar"
+ * ----------------------------------------------------------------------------
+ */
+
+/* Fundo de praia: céu verde-água no alto descendo para a areia. */
+ion-content {
+  --background: linear-gradient(180deg, #dff1ee 0%, #f3f8f4 38%, #faf5ea 100%);
+}
+
+/* Barras de título em degradê de mar. */
+ion-toolbar.ion-color-primary {
+  --ion-color-base: linear-gradient(120deg, #0b4f4a 0%, #0d5c56 45%, #148a82 100%) !important;
+}
+
+/* Animação suave ao abrir cada tela (cartões e listas surgem de baixo). */
+@keyframes app-surgir {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-hero,
+.app-card,
+.app-acao-principal,
+.app-empty-state,
+.saldo-card,
+.cartao-suite,
+.atalho,
+.numero,
+ion-list.app-list > ion-item {
+  animation: app-surgir 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.atalho:nth-child(2),
+.numero:nth-child(2),
+ion-list.app-list > ion-item:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.atalho:nth-child(3),
+ion-list.app-list > ion-item:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.atalho:nth-child(4),
+ion-list.app-list > ion-item:nth-child(4) {
+  animation-delay: 0.15s;
+}
+
+ion-list.app-list > ion-item:nth-child(n + 5) {
+  animation-delay: 0.2s;
+}
+
+ion-button,
+.atalho,
+ion-item {
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+ion-button:active,
+.atalho:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/*
+ * Leitura confortável: o app é usado por pessoas mais velhas,
+ * então letras maiores, botões altos e sem textos em CAIXA ALTA.
+ */
+html {
+  font-size: 17px;
+}
+
+ion-title {
+  font-size: 20px;
+}
+
+ion-item {
+  --min-height: 58px;
+  font-size: 17px;
+}
+
+ion-label h2 {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin-bottom: 4px !important;
+}
+
+ion-label p,
+ion-note {
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+
+ion-input,
+ion-select,
+ion-textarea,
+ion-toggle,
+ion-searchbar {
+  font-size: 17px !important;
+}
+
+ion-button,
+ion-segment-button,
+ion-chip,
+ion-alert .alert-button,
+ion-action-sheet .action-sheet-button {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+/* Avisos (alertas) com letra maior e botões fáceis de tocar. */
+ion-alert {
+  --min-width: 300px;
+
+  .alert-title {
+    font-size: 21px !important;
+  }
+
+  .alert-message {
+    font-size: 17px !important;
+    line-height: 1.45;
+    color: var(--ion-text-color) !important;
+  }
+
+  .alert-button {
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    min-height: 48px;
+    padding: 0 14px !important;
+  }
+
+  .alert-button-role-destructive {
+    color: var(--ion-color-danger) !important;
+  }
+}
+
+ion-action-sheet .action-sheet-button {
+  font-size: 18px !important;
+  min-height: 56px;
+}
+
+ion-toast {
+  --width: calc(100% - 24px);
+  font-size: 16px;
+}
+
+/* Abas das barras de título: fundo branco, texto escuro, aba escolhida em verde. */
+ion-toolbar:not(.ion-color) ion-segment {
+  --background: transparent;
+}
+
+ion-toolbar:not(.ion-color) ion-segment-button {
+  --color: var(--ion-color-medium-shade);
+  --color-checked: var(--ion-color-primary);
+  --indicator-color: var(--ion-color-primary);
+  --background-checked: rgba(var(--ion-color-primary-rgb), 0.08);
+  font-size: 15px;
+  font-weight: 600;
+  min-height: 48px;
+}
+
+ion-toolbar:not(.ion-color) {
+  --background: #ffffff;
+  --color: var(--ion-text-color);
+}
+
+ion-button {
+  font-size: 16px;
+  font-weight: 600;
+  min-height: 46px;
+}
+
+ion-badge {
+  font-size: 13px;
+  padding: 5px 8px;
+  border-radius: 8px;
+}
+
+/* Botão grande de ação principal no topo de cada tela. */
+.app-acao-principal {
+  --border-radius: 14px;
+  min-height: 54px;
+  font-size: 17px;
+  margin: 0 0 14px;
+}
+
+.app-acoes-rodape {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0 30px;
+
+  ion-button {
+    --border-radius: 14px;
+    min-height: 52px;
+    margin: 0;
+  }
+}
+
+.app-aviso-erro {
+  background: rgba(var(--ion-color-danger-rgb), 0.08);
+  border: 1px solid rgba(var(--ion-color-danger-rgb), 0.35);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 8px 0 12px;
+  font-size: 16px;
+  color: var(--ion-text-color);
+
+  ul {
+    margin: 6px 0 0;
+    padding-left: 20px;
+  }
+}
+
+.app-texto-ajuda {
+  font-size: 15px;
+  color: var(--ion-color-medium-shade);
+  margin: -4px 4px 12px;
+  line-height: 1.45;
+}
+
+.app-card {
+  background: var(--ion-card-background);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.app-section-title {
+  font-family: var(--app-font-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  margin: 18px 0 10px;
+}
+
+.app-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 48px 24px;
+  color: var(--ion-color-medium);
+  text-align: center;
+
+  ion-icon {
+    font-size: 42px;
+    color: var(--ion-color-medium-tint);
+  }
+}
+
+.app-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--app-gradient-mar);
+  color: #fff;
+  border-radius: var(--app-radius);
+  padding: 22px 18px 34px;
+  margin-bottom: 16px;
+  box-shadow: var(--app-shadow);
+
+  h1 {
+    font-family: var(--app-font-display);
+    margin: 0 0 4px;
+    font-size: 28px;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.95;
+    font-size: 16px;
+  }
+
+  /* Ondinha animada no rodapé do cartão. */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 200%;
+    height: 22px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 720 22' preserveAspectRatio='none'%3E%3Cpath d='M0 12 C120 24 240 0 360 12 C480 24 600 0 720 12 L720 22 L0 22Z' fill='rgba(255,255,255,0.28)'/%3E%3C/svg%3E")
+      repeat-x;
+    background-size: 50% 100%;
+    animation: app-onda 9s linear infinite;
+  }
+}
+
+@keyframes app-onda {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+ion-list.app-list {
+  background: transparent;
+
+  ion-item {
+    --border-radius: var(--app-radius);
+    margin-bottom: 8px;
+    --background: var(--ion-card-background);
+    box-shadow: var(--app-shadow);
+  }
+}
+
+.app-modal-form {
+  ion-item {
+    --border-radius: 10px;
+    margin-bottom: 10px;
+  }
+}

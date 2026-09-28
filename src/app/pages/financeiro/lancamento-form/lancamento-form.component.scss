@@ -1,0 +1,31 @@
+.tipo-segment {
+  margin-bottom: 14px;
+  padding: 4px;
+  gap: 4px;
+  background: var(--ion-card-background);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+
+  /* Aba escolhida pintada por inteiro (no Android o padrão é só um risco embaixo). */
+  ion-segment-button {
+    --background: transparent;
+    --background-checked: var(--ion-color-danger);
+    --color: var(--ion-color-medium-shade);
+    --color-checked: #ffffff;
+    --indicator-color: transparent;
+    --indicator-height: 0;
+    --border-radius: 12px;
+    min-height: 54px;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 12px;
+
+    ion-label {
+      white-space: normal;
+    }
+  }
+
+  &.receita ion-segment-button {
+    --background-checked: var(--ion-color-success);
+  }
+}

@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Reservas</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="filtro" scrollable>
+      <ion-segment-button value="ativas"><ion-label>Próximas</ion-label></ion-segment-button>
+      <ion-segment-button value="finalizadas"><ion-label>Já foram</ion-label></ion-segment-button>
+      <ion-segment-button value="canceladas"><ion-label>Canceladas</ion-label></ion-segment-button>
+      <ion-segment-button value="todas"><ion-label>Todas</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-button expand="block" class="app-acao-principal" (click)="abrir()">
+    <ion-icon slot="start" name="add-outline"></ion-icon>
+    Fazer reserva nova
+  </ion-button>
+
+  @if (linhas.length > 0) {
+    <ion-searchbar [(ngModel)]="busca" placeholder="Procurar pelo nome do hóspede" [debounce]="150" class="busca"></ion-searchbar>
+  }
+
+  @if (linhasFiltradas.length === 0) {
+    <div class="app-empty-state">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <p>{{ linhas.length === 0 ? 'Nenhuma reserva ainda.' : 'Nenhuma reserva aqui.' }}</p>
+    </div>
+  } @else {
+    <ion-list class="app-list">
+      @for (linha of linhasFiltradas; track linha.reserva.id) {
+        <ion-item button detail="true" (click)="abrir(linha.reserva)">
+          <ion-label class="ion-text-wrap">
+            <h2>{{ linha.hospedeNome }}</h2>
+            <p>{{ linha.suiteNome }}</p>
+            <p>Chega {{ formatarData(linha.reserva.checkIn) }} · Sai {{ formatarData(linha.reserva.checkOut) }}</p>
+            <p class="linha-badges">
+              <ion-badge [color]="statusCor[linha.reserva.status]">{{ statusLabel[linha.reserva.status] }}</ion-badge>
+              @if (linha.faltaPagar > 0) {
+                <ion-badge color="warning">Falta pagar {{ formatarMoeda(linha.faltaPagar) }}</ion-badge>
+              } @else if (linha.reserva.status !== 'cancelada') {
+                <ion-badge color="success">Tudo pago</ion-badge>
+              }
+            </p>
+          </ion-label>
+          <span slot="end" class="valor-total">{{ formatarMoeda(linha.reserva.valorTotal) }}</span>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>

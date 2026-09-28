@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">Voltar</ion-button>
+    </ion-buttons>
+    <ion-title>{{ edicao ? 'Suíte' : 'Nova suíte' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [strong]="true" (click)="salvar()">Salvar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list class="app-modal-form" lines="inset">
+    <ion-item>
+      <ion-input label="Nome da suíte" labelPlacement="stacked" placeholder="Ex: Suíte 1 ou Suíte Pé na Areia" [(ngModel)]="modelo.nome" name="nome"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select label="Tipo" labelPlacement="stacked" [(ngModel)]="modelo.tipo" name="tipo" interface="action-sheet" cancelText="Voltar">
+        @for (tipo of tipos; track tipo) {
+          <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-input label="Quantas pessoas cabem" labelPlacement="stacked" type="number" inputmode="numeric" min="1" [(ngModel)]="modelo.capacidade" name="capacidade"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input label="Valor da diária (R$)" labelPlacement="stacked" type="number" inputmode="decimal" min="0" step="0.01" [(ngModel)]="modelo.valorDiaria" name="valorDiaria"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-textarea label="Descrição (se quiser)" labelPlacement="stacked" placeholder="Ex: ar-condicionado, varanda, vista para o mar" autoGrow="true" [(ngModel)]="modelo.descricao" name="descricao"></ion-textarea>
+    </ion-item>
+
+    <ion-item lines="none">
+      <ion-toggle [(ngModel)]="modelo.ativo" name="ativo" justify="space-between">
+        {{ modelo.ativo ? 'Aceitando reservas' : 'Desativada (não aparece em novas reservas)' }}
+      </ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  @if (tentouSalvar && problemas.length > 0) {
+    <div class="app-aviso-erro">
+      <strong>Para salvar, falta:</strong>
+      <ul>
+        @for (p of problemas; track p) {
+          <li>{{ p }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (edicao) {
+    @if (modelo.ativo) {
+      <ion-button expand="block" fill="outline" class="botao-largo" (click)="novaReserva()">
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        Fazer uma reserva nesta suíte
+      </ion-button>
+    }
+
+    <h2 class="app-section-title">Próximas reservas desta suíte</h2>
+    @if (proximas.length === 0) {
+      <p class="app-texto-ajuda">Nenhuma reserva marcada.</p>
+    } @else {
+      <ion-list class="app-list">
+        @for (item of proximas; track item.reserva.id) {
+          <ion-item button detail="true" (click)="abrirReserva(item)">
+            <ion-label class="ion-text-wrap">
+              <h2>{{ item.hospedeNome }}</h2>
+              <p>{{ item.periodo }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    }
+  }
+
+  <div class="app-acoes-rodape">
+    <ion-button expand="block" (click)="salvar()">Salvar suíte</ion-button>
+    @if (edicao) {
+      <ion-button expand="block" fill="outline" color="danger" (click)="apagar()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Apagar suíte
+      </ion-button>
+    }
+  </div>
+</ion-content>

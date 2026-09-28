@@ -1,0 +1,19 @@
+.busca {
+  padding: 0 0 8px;
+  --border-radius: 12px;
+}
+
+.linha-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 4px !important;
+}
+
+.valor-total {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ion-color-primary);
+  white-space: nowrap;
+}

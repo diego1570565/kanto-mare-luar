@@ -1,0 +1,50 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Hóspedes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-button expand="block" class="app-acao-principal" (click)="abrir()">
+    <ion-icon slot="start" name="person-add-outline"></ion-icon>
+    Cadastrar hóspede novo
+  </ion-button>
+
+  @if (linhas.length > 0) {
+    <ion-searchbar [(ngModel)]="filtro" placeholder="Procurar pelo nome ou telefone" [debounce]="150" class="busca"></ion-searchbar>
+  }
+
+  @if (linhasFiltradas.length === 0) {
+    <div class="app-empty-state">
+      <ion-icon name="people-outline"></ion-icon>
+      <p>{{ linhas.length === 0 ? 'Nenhum hóspede cadastrado ainda.' : 'Ninguém encontrado com esse nome.' }}</p>
+    </div>
+  } @else {
+    <ion-list class="app-list">
+      @for (linha of linhasFiltradas; track linha.hospede.id) {
+        <ion-item button detail="true" (click)="abrir(linha.hospede)">
+          <ion-label class="ion-text-wrap">
+            <h2>{{ linha.hospede.nome }}</h2>
+            <p>
+              @if (linha.hospede.telefone) {
+                <ion-icon name="call-outline"></ion-icon> {{ linha.hospede.telefone }}
+              }
+              @if (linha.hospede.cidade) {
+                {{ linha.hospede.telefone ? ' · ' : '' }}{{ linha.hospede.cidade }}
+              }
+            </p>
+            <p>
+              @if (linha.hospedadoAgora) {
+                <ion-badge color="primary">Hospedado agora</ion-badge>
+              }
+              {{ linha.totalReservas === 0 ? 'Nenhuma reserva' : linha.totalReservas === 1 ? '1 reserva' : linha.totalReservas + ' reservas' }}
+            </p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>

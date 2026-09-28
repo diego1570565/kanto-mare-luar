@@ -1,0 +1,70 @@
+ion-item {
+  --border-radius: 10px;
+}
+
+.botao-secundario {
+  --border-radius: 12px;
+  margin: 0 0 12px;
+  width: 100%;
+}
+
+.quadro-pagamento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+
+  div {
+    background: var(--ion-card-background);
+    border-radius: var(--app-radius);
+    box-shadow: var(--app-shadow);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  span {
+    font-size: 15px;
+    color: var(--ion-color-medium-shade);
+  }
+
+  strong {
+    font-size: 21px;
+  }
+
+  .pago {
+    color: var(--ion-color-success-shade);
+  }
+
+  .falta {
+    color: var(--ion-color-danger);
+  }
+}
+
+.cartao-pagamento {
+  background: var(--ion-card-background);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+  padding: 8px 8px 4px;
+  margin-bottom: 12px;
+
+  .cartao-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    font-size: 17px;
+  }
+}
+
+.botoes-pagamento {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  ion-button {
+    --border-radius: 12px;
+    margin: 0;
+  }
+}

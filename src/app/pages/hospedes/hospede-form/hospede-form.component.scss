@@ -1,0 +1,13 @@
+.botao-largo {
+  --border-radius: 12px;
+  margin: 12px 0 0;
+}
+
+.erro {
+  color: var(--ion-color-danger);
+  margin-top: 4px;
+}
+
+ion-badge + ion-badge {
+  margin-left: 6px;
+}

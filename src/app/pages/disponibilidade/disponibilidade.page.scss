@@ -1,0 +1,88 @@
+.botao-consultar {
+  --border-radius: 12px;
+  margin-top: 8px;
+  min-height: 50px;
+}
+
+.busca {
+  padding: 0 0 8px;
+  --border-radius: 12px;
+}
+
+.resumo-busca {
+  font-size: 17px;
+  margin: 16px 2px 10px;
+}
+
+.cartao-suite {
+  background: var(--ion-card-background);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+  padding: 14px;
+  margin-bottom: 12px;
+  border-left: 6px solid var(--ion-color-medium);
+
+  &.livre {
+    border-left-color: var(--ion-color-success);
+
+    .cartao-topo ion-icon {
+      color: var(--ion-color-success);
+    }
+  }
+
+  &.ocupada {
+    border-left-color: var(--ion-color-danger);
+
+    .cartao-topo ion-icon {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  .cartao-topo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+
+    ion-icon {
+      font-size: 34px;
+      flex-shrink: 0;
+    }
+
+    strong {
+      display: block;
+      font-size: 19px;
+    }
+
+    span {
+      font-size: 15px;
+      color: var(--ion-color-medium-shade);
+    }
+  }
+
+  ion-button {
+    --border-radius: 12px;
+    margin: 0;
+    min-height: 50px;
+  }
+}
+
+.ocupacao {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: rgba(var(--ion-color-danger-rgb), 0.06);
+  border: 0;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--ion-text-color);
+  cursor: pointer;
+
+  span {
+    float: right;
+    color: var(--ion-color-primary);
+    font-weight: 600;
+  }
+}

@@ -1,0 +1,23 @@
+.botao-grande {
+  --border-radius: 12px;
+  min-height: 52px;
+  margin-top: 10px;
+}
+
+.descricao {
+  color: var(--ion-text-color);
+  font-size: 16px;
+  line-height: 1.45;
+  margin: 0 0 10px;
+}
+
+.ultima-copia {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ion-color-success-shade);
+  margin: 4px 0 0;
+
+  &.nunca {
+    color: var(--ion-color-danger);
+  }
+}
